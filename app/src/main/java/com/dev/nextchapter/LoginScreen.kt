@@ -1,8 +1,10 @@
 package com.dev.nextchapter
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,11 +27,16 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.dev.nextchapter.viewmodel.UserViewModel
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(navController: NavController, viewModel: UserViewModel = viewModel()) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var loginError by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -55,20 +62,46 @@ fun LoginScreen() {
             visualTransformation = PasswordVisualTransformation()
         )
         Spacer(modifier = Modifier.height(16.dp))
-        Button(
-            onClick = {},
-            modifier = Modifier.align(Alignment.End),
-            colors = ButtonDefaults.buttonColors().copy(
-                containerColor = Color(0xFF3791DB)
-            )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            Text("Login")
+            Text(
+                text = "Don't haven an account? Sign Up",
+                color = Color.White,
+                modifier = Modifier.clickable {
+                    navController.navigate("signup")
+                }
+            )
+            Button(
+                onClick = {
+                    viewModel.login(username, password).observeForever() { user ->
+                        if (user != null) {
+                            navController.navigate("home")
+                        } else {
+                            loginError = true
+                        }
+                    }
+                },
+                colors = ButtonDefaults.buttonColors().copy(
+                    containerColor = Color(0xFF3791DB)
+                )
+            ) {
+                Text("Login")
+            }
+
         }
+
+        if (loginError) {
+            Text("Invalid credentials. Please try again.", color = Color.Red)
+        }
+
     }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview() {
-    LoginScreen()
+    LoginScreen(navController = rememberNavController())
 }

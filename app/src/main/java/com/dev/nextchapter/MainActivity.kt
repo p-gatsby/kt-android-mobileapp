@@ -11,15 +11,29 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.dev.nextchapter.ui.theme.NextChapterTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContent {
+            enableEdgeToEdge()
             NextChapterTheme {
-
+                val navController = rememberNavController()
+                NavHost(navController, startDestination = "login") {
+                    composable("login") {
+                        LoginScreen(navController)
+                    }
+                    composable("signup") {
+                        SignupScreen(navController)
+                    }
+                    composable("home") {
+                        Text("Welcome to the homepage")
+                    }
+                }
             }
         }
     }

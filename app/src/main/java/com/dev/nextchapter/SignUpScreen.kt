@@ -1,8 +1,10 @@
 package com.dev.nextchapter
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,12 +27,18 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.dev.nextchapter.viewmodel.UserViewModel
 
 @Composable
-fun SignupScreen() {
+fun SignupScreen(navController: NavController, viewModel: UserViewModel = viewModel()) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
+    var singupError by remember { mutableStateOf(false) }
+    var passwordError by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -63,20 +71,53 @@ fun SignupScreen() {
             visualTransformation = PasswordVisualTransformation()
         )
         Spacer(modifier = Modifier.height(16.dp))
-        Button(
-            onClick = {},
-            modifier = Modifier.align(Alignment.End),
-            colors = ButtonDefaults.buttonColors().copy(
-                containerColor = Color(0xFF3791DB)
-            )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            Text("Sign Up")
+            Text(
+                text = "Already have an account? Login",
+                color = Color.White,
+                modifier = Modifier.clickable {
+                    navController.navigate("login")
+                }
+            )
+            Button(
+                onClick = {
+                    if (password != confirmPassword) {
+                        passwordError = true
+                    } else {
+                        viewModel.signUp(username, password).observeForever() { success ->
+                            if (success) {
+                                navController.navigate("login")
+                            } else {
+                                singupError = true
+                            }
+
+                        }
+                    }
+                },
+                colors = ButtonDefaults.buttonColors().copy(
+                    containerColor = Color(0xFF3791DB)
+                )
+            ) {
+                Text("Sign up")
+            }
+
         }
+        if (singupError) {
+            Text("Username already exists. Please choose another.", color = Color.Red)
+        }
+        if (passwordError) {
+            Text("Passwords do not match.", color = Color.Red)
+        }
+
     }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun SignupScreenPreview() {
-    SignupScreen()
+    SignupScreen(navController = rememberNavController())
 }
