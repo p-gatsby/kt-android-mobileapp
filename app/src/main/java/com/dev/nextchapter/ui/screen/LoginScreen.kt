@@ -1,4 +1,4 @@
-package com.dev.nextchapter
+package com.dev.nextchapter.ui.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -33,12 +33,10 @@ import androidx.navigation.compose.rememberNavController
 import com.dev.nextchapter.viewmodel.UserViewModel
 
 @Composable
-fun SignupScreen(navController: NavController, viewModel: UserViewModel = viewModel()) {
+fun LoginScreen(navController: NavController, viewModel: UserViewModel = viewModel()) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
-    var singupError by remember { mutableStateOf(false) }
-    var passwordError by remember { mutableStateOf(false) }
+    var loginError by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -49,7 +47,7 @@ fun SignupScreen(navController: NavController, viewModel: UserViewModel = viewMo
         horizontalAlignment = Alignment.CenterHorizontally
     )
     {
-        Text("Sign up: The Next Chapter 📚", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+        Text("The Next Chapter 📚", fontSize = 24.sp, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
@@ -63,13 +61,6 @@ fun SignupScreen(navController: NavController, viewModel: UserViewModel = viewMo
             label = { Text("Password") },
             visualTransformation = PasswordVisualTransformation()
         )
-        OutlinedTextField(
-            modifier = Modifier.fillMaxWidth(),
-            value = confirmPassword,
-            onValueChange = { confirmPassword = it },
-            label = { Text("Confirm Password") },
-            visualTransformation = PasswordVisualTransformation()
-        )
         Spacer(modifier = Modifier.height(16.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -77,24 +68,20 @@ fun SignupScreen(navController: NavController, viewModel: UserViewModel = viewMo
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             Text(
-                text = "Already have an account? Login",
+                text = "Don't haven an account? Sign Up",
                 color = Color.White,
                 modifier = Modifier.clickable {
-                    navController.navigate("login")
+                    navController.navigate("signup")
                 }
             )
             Button(
                 onClick = {
-                    if (password != confirmPassword) {
-                        passwordError = true
-                    } else {
-                        viewModel.signUp(username, password).observeForever() { success ->
-                            if (success) {
-                                navController.navigate("login")
-                            } else {
-                                singupError = true
-                            }
-
+                    viewModel.login(username, password).observeForever() { user ->
+                        if (user != null) {
+                            viewModel.setCurrentUser(user)
+                            navController.navigate("home")
+                        } else {
+                            loginError = true
                         }
                     }
                 },
@@ -102,15 +89,13 @@ fun SignupScreen(navController: NavController, viewModel: UserViewModel = viewMo
                     containerColor = Color(0xFF3791DB)
                 )
             ) {
-                Text("Sign up")
+                Text("Login")
             }
 
         }
-        if (singupError) {
-            Text("Username already exists. Please choose another.", color = Color.Red)
-        }
-        if (passwordError) {
-            Text("Passwords do not match.", color = Color.Red)
+
+        if (loginError) {
+            Text("Invalid credentials. Please try again.", color = Color.Red)
         }
 
     }
@@ -118,6 +103,6 @@ fun SignupScreen(navController: NavController, viewModel: UserViewModel = viewMo
 
 @Preview(showBackground = true)
 @Composable
-fun SignupScreenPreview() {
-    SignupScreen(navController = rememberNavController())
+fun LoginScreenPreview() {
+    LoginScreen(navController = rememberNavController())
 }
