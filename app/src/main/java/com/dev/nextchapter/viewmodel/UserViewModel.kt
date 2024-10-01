@@ -16,6 +16,11 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
     private val _currentUser = MutableLiveData<User?>()
     val currentUser: LiveData<User?> get() = _currentUser
 
+    // Function to set the current logged-in user
+    fun setCurrentUser(user: User) {
+        _currentUser.value = user
+    }
+
     // Function to handle user login
     fun login(username: String, password: String) = liveData(Dispatchers.IO) {
         val user = userDao.getUserByUsername(username)
@@ -30,11 +35,6 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         } else {
             emit(null)
         }
-    }
-
-    // Function to set the current logged-in user
-    fun setCurrentUser(user: User){
-        _currentUser.value = user
     }
 
     fun signUp(username: String, password: String) = liveData(Dispatchers.IO) {
@@ -61,8 +61,13 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
                 salt = newSalt
             )
 
-            userDao.update(user)
+            userDao.update(updateUser)
         }
         emit(true)
+    }
+
+    // Function to logout the user
+    fun logoutUser() {
+        _currentUser.value = null
     }
 }

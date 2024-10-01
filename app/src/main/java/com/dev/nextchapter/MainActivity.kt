@@ -5,6 +5,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.material3.Text
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -22,9 +24,20 @@ class MainActivity : ComponentActivity() {
             enableEdgeToEdge()
             val userView: UserViewModel by viewModels()
 
+            // Trigger the update to existing users without salt
+//            userView.updateExistingUsers().observe(this) { success ->
+//                if (success) {
+//                    // You can show a message or handle UI if needed
+//                    println("Users without salt have been updated successfully.")
+//                }
+//            }
+
             NextChapterTheme {
                 val navController = rememberNavController()
-                NavHost(navController, startDestination = "login") {
+                NavHost(navController,
+                    startDestination = "login",
+                    enterTransition = { EnterTransition.None },
+                    exitTransition = { ExitTransition.None }) {
                     composable("login") {
                         LoginScreen(navController, userView)
                     }
@@ -32,7 +45,7 @@ class MainActivity : ComponentActivity() {
                         SignupScreen(navController)
                     }
                     composable("home") {
-                        HomeScreen(userView)
+                        HomeScreen(navController, userView)
                     }
                 }
             }
