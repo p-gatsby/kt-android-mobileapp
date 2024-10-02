@@ -51,20 +51,6 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun updateExistingUsers() = liveData(Dispatchers.IO) {
-        val users = userDao.getUsersWithoutSalt()
-        users.forEach { user ->
-            var newSalt = HashUtils.generateSalt()
-            val newHashPassword = HashUtils.hashPassword(user.password, newSalt)
-            val updateUser = user.copy(
-                password = newHashPassword,
-                salt = newSalt
-            )
-
-            userDao.update(updateUser)
-        }
-        emit(true)
-    }
 
     // Function to logout the user
     fun logoutUser() {

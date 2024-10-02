@@ -13,6 +13,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.dev.nextchapter.ui.screen.HomeScreen
 import com.dev.nextchapter.ui.screen.LoginScreen
+import com.dev.nextchapter.ui.screen.SearchScreen
 import com.dev.nextchapter.ui.screen.SignupScreen
 import com.dev.nextchapter.ui.theme.NextChapterTheme
 import com.dev.nextchapter.viewmodel.UserViewModel
@@ -23,14 +24,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             enableEdgeToEdge()
             val userView: UserViewModel by viewModels()
-
-            // Trigger the update to existing users without salt
-//            userView.updateExistingUsers().observe(this) { success ->
-//                if (success) {
-//                    // You can show a message or handle UI if needed
-//                    println("Users without salt have been updated successfully.")
-//                }
-//            }
 
             NextChapterTheme {
                 val navController = rememberNavController()
@@ -46,6 +39,12 @@ class MainActivity : ComponentActivity() {
                     }
                     composable("home") {
                         HomeScreen(navController, userView)
+                    }
+                    composable("searchbooks/{query}") { backStackEntry ->
+                        val query = backStackEntry.arguments?.getString("query")
+                        query?.let {
+                            SearchScreen(query)
+                        }
                     }
                 }
             }

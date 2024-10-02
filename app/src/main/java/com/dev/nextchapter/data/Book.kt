@@ -1,7 +1,29 @@
 package com.dev.nextchapter.data
 
-class Book {
-}
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+data class BookResponse(
+    val items: List<Book>
+)
+
+@Parcelize
+data class Book(
+    val volumeInfo: VolumeInfo
+) : Parcelable
+
+@Parcelize
+data class VolumeInfo(
+    val title: String,
+    val authors: List<String>,
+    val description: String,
+    val imageLinks: ImageLinks,
+) : Parcelable
+
+@Parcelize
+data class ImageLinks(
+    val thumbnail: String
+) : Parcelable
 
 data class BookCategory(
     val name: String,

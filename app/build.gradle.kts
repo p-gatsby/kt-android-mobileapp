@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -8,13 +10,23 @@ plugins {
 android {
     namespace = "com.dev.nextchapter"
     compileSdk = 34
-
+    buildFeatures.buildConfig = true
     defaultConfig {
         applicationId = "com.dev.nextchapter"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
+
+        // Get the API key from local.properties
+        val localProperties = Properties().apply {
+            val localPropertiesFile = rootProject.file("local.properties")
+            if (localPropertiesFile.exists()) {
+                localPropertiesFile.inputStream().use { load(it) }
+            }
+        }
+
+        buildConfigField("String", "GOOGLE_API_KEY", "\"${localProperties["GOOGLE_API_KEY"]}\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -26,8 +38,7 @@ android {
         release {
             isMinifyEnabled = false
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             )
         }
     }

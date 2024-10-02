@@ -25,10 +25,6 @@ interface UserDao {
     @Query("SELECT * FROM user_table WHERE username = :username LIMIT 1")
     suspend fun getUserByUsername(username: String): User?
 
-    // Retrieve all the users without salt
-    @Query("SELECT * FROM user_table WHERE salt = ''")
-    suspend fun getUsersWithoutSalt(): List<User>
-
     @Update
     suspend fun update(user: User)
 }
