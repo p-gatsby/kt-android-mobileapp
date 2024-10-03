@@ -1,14 +1,18 @@
 package com.dev.nextchapter.data
 
 import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
-data class BookResponse(
-    val items: List<Book>
-)
+@Parcelize
+data class BookListResponse(
+    @SerializedName("items")
+    val bookList: List<Book>
+) : Parcelable
 
 @Parcelize
 data class Book(
+    val id: String,
     val volumeInfo: VolumeInfo
 ) : Parcelable
 

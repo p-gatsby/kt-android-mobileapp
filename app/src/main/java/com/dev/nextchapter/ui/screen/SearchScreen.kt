@@ -40,19 +40,19 @@ import coil.size.Size
 import coil.transform.RoundedCornersTransformation
 import coil.util.DebugLogger
 import com.dev.nextchapter.data.Book
-import com.dev.nextchapter.viewmodel.SearchViewModel
+import com.dev.nextchapter.viewmodel.BookViewModel
 
 @Composable
 fun SearchScreen(
     query: String,
-    searchViewModel: SearchViewModel = viewModel(),
+    bookViewModel: BookViewModel = viewModel(),
     navController: NavController
 ) {
     LaunchedEffect(key1 = query) {
-        searchViewModel.searchBooks(query)
+        bookViewModel.searchBooks(query)
     }
 
-    val searchState by searchViewModel.bookState
+    val searchState by bookViewModel.searchListState
 
     Column(
         modifier = Modifier
@@ -99,7 +99,7 @@ fun SearchScreen(
                     contentPadding = PaddingValues(16.dp)
                 ) {
                     items(searchState.bookList) {
-                        BookItem(it)
+                        BookItem(it, navController)
                     }
 
                 }
@@ -109,7 +109,7 @@ fun SearchScreen(
 }
 
 @Composable
-fun BookItem(book: Book) {
+fun BookItem(book: Book, navController: NavController) {
     val imageUrl = book.volumeInfo.imageLinks.thumbnail
 
     // Create a custom ImageLoader for debugging
@@ -123,7 +123,9 @@ fun BookItem(book: Book) {
         modifier = Modifier
             .padding(8.dp)
             .fillMaxWidth()
-            .clickable { },
+            .clickable {
+                navController.navigate("bookdetails/${book.id}")
+            },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(text = book.volumeInfo.title, maxLines = 1, overflow = TextOverflow.Ellipsis)

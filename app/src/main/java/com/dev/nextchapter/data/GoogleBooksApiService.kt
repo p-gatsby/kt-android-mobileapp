@@ -1,9 +1,11 @@
 package com.dev.nextchapter.data
+
 import com.dev.nextchapter.BuildConfig
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 // Retrofit Instance
@@ -24,6 +26,12 @@ interface GoogleBooksApiService {
     suspend fun searchBooks(
         @Query("q") query: String,
         @Query("key") apiKey: String = API_KEY
-    ): BookResponse
+    ): BookListResponse
+
+    @GET("volumes/{volumeId}")
+    suspend fun getBookDetails(
+        @Path("volumeId") volumeId: String,
+        @Query("key") apiKey: String = API_KEY
+    ) : Book
 }
 

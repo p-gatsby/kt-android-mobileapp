@@ -12,6 +12,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.dev.nextchapter.ui.screen.BookDetailScreen
 import com.dev.nextchapter.ui.screen.HomeScreen
 import com.dev.nextchapter.ui.screen.LoginScreen
 import com.dev.nextchapter.ui.screen.SearchScreen
@@ -24,7 +25,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             enableEdgeToEdge()
-            val userView: UserViewModel by viewModels()
+            val userViewModel: UserViewModel by viewModels()
 
             NextChapterTheme {
                 val navController = rememberNavController()
@@ -33,18 +34,28 @@ class MainActivity : ComponentActivity() {
                     enterTransition = { EnterTransition.None },
                     exitTransition = { ExitTransition.None }) {
                     composable("login") {
-                        LoginScreen(navController, userView)
+                        LoginScreen(navController, userViewModel)
                     }
                     composable("signup") {
                         SignupScreen(navController)
                     }
                     composable("home") {
-                        HomeScreen(navController, userView)
+                        HomeScreen(navController, userViewModel)
                     }
                     composable("searchbooks/{query}") { backStackEntry ->
                         val query = backStackEntry.arguments?.getString("query")
                         query?.let {
                             SearchScreen(query, navController = navController)
+                        }
+                    }
+                    composable("bookdetails/{volumeId}") { backStackEntry ->
+                        val volumeId = backStackEntry.arguments?.getString("volumeId")
+                        volumeId?.let {
+                            BookDetailScreen(
+                                volumeId,
+                                userViewModel = userViewModel,
+                                navController = navController
+                            )
                         }
                     }
                 }
