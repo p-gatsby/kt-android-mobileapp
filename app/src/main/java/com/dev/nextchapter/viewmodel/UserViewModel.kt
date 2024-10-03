@@ -51,7 +51,6 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-
     // Function to logout the user
     fun logoutUser() {
         _currentUser.value = null

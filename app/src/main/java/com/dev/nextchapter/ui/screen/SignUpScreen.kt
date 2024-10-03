@@ -33,7 +33,7 @@ import androidx.navigation.compose.rememberNavController
 import com.dev.nextchapter.viewmodel.UserViewModel
 
 @Composable
-fun SignupScreen(navController: NavController, viewModel: UserViewModel = viewModel()) {
+fun SignupScreen(navController: NavController, userViewModel: UserViewModel = viewModel()) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
@@ -88,7 +88,7 @@ fun SignupScreen(navController: NavController, viewModel: UserViewModel = viewMo
                     if (password != confirmPassword) {
                         passwordError = true
                     } else {
-                        viewModel.signUp(username, password).observeForever() { success ->
+                        userViewModel.signUp(username, password).observeForever() { success ->
                             if (success) {
                                 navController.navigate("login")
                             } else {

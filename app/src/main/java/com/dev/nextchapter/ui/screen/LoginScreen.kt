@@ -33,7 +33,7 @@ import androidx.navigation.compose.rememberNavController
 import com.dev.nextchapter.viewmodel.UserViewModel
 
 @Composable
-fun LoginScreen(navController: NavController, viewModel: UserViewModel = viewModel()) {
+fun LoginScreen(navController: NavController, userViewModel: UserViewModel = viewModel()) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var loginError by remember { mutableStateOf(false) }
@@ -76,9 +76,9 @@ fun LoginScreen(navController: NavController, viewModel: UserViewModel = viewMod
             )
             Button(
                 onClick = {
-                    viewModel.login(username, password).observeForever() { user ->
+                    userViewModel.login(username, password).observeForever() { user ->
                         if (user != null) {
-                            viewModel.setCurrentUser(user)
+                            userViewModel.setCurrentUser(user)
                             navController.navigate("home")
                         } else {
                             loginError = true

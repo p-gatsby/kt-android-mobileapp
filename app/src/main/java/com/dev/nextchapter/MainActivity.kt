@@ -8,6 +8,7 @@ import androidx.activity.viewModels
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.material3.Text
+import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -43,7 +44,7 @@ class MainActivity : ComponentActivity() {
                     composable("searchbooks/{query}") { backStackEntry ->
                         val query = backStackEntry.arguments?.getString("query")
                         query?.let {
-                            SearchScreen(query)
+                            SearchScreen(query, navController = navController)
                         }
                     }
                 }

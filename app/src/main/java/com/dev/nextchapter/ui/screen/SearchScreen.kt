@@ -9,16 +9,13 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -34,6 +31,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import coil.ImageLoader
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
@@ -44,7 +43,11 @@ import com.dev.nextchapter.data.Book
 import com.dev.nextchapter.viewmodel.SearchViewModel
 
 @Composable
-fun SearchScreen(query: String, searchViewModel: SearchViewModel = SearchViewModel()) {
+fun SearchScreen(
+    query: String,
+    searchViewModel: SearchViewModel = viewModel(),
+    navController: NavController
+) {
     LaunchedEffect(key1 = query) {
         searchViewModel.searchBooks(query)
     }
@@ -70,9 +73,20 @@ fun SearchScreen(query: String, searchViewModel: SearchViewModel = SearchViewMod
             }
 
             searchState.bookList.isNotEmpty() -> {
-                Row {
-                    Text("Search Results for \"$query\"", fontSize = 14.sp)
-                    Button(onClick = {}) {
+                Row(
+                    modifier = Modifier,
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    Text(
+                        "Search results for \"$query\"",
+                        fontSize = 20.sp,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Button(
+                        onClick = {
+                            navController.navigate("home")
+                        }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Go Back"
@@ -86,7 +100,6 @@ fun SearchScreen(query: String, searchViewModel: SearchViewModel = SearchViewMod
                 ) {
                     items(searchState.bookList) {
                         BookItem(it)
-
                     }
 
                 }
@@ -97,7 +110,7 @@ fun SearchScreen(query: String, searchViewModel: SearchViewModel = SearchViewMod
 
 @Composable
 fun BookItem(book: Book) {
-    val imageUrl = book.volumeInfo.imageLinks?.thumbnail
+    val imageUrl = book.volumeInfo.imageLinks.thumbnail
 
     // Create a custom ImageLoader for debugging
     val imageLoader = ImageLoader.Builder(LocalContext.current)
