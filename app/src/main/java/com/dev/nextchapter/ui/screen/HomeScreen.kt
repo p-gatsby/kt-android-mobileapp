@@ -38,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -57,11 +58,14 @@ fun HomeScreen(navController: NavController, userViewModel: UserViewModel = view
     var showMenu by remember { mutableStateOf(false) }
     var searchQuery by remember { mutableStateOf("") }
     var keyboardController = LocalSoftwareKeyboardController.current
+    val linear = Brush.linearGradient(listOf(Color
+        .hsl(300f, 0.26f, 0.71f), Color
+        .hsl(291f, 0.97f, 0.13f)))
 
 
     Column(
         modifier = Modifier
-            .background(Color(0xFFE1DCC5))
+            .background(linear)
             .padding(top = 36.dp, start = 16.dp, end = 16.dp)
             .fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -179,3 +183,4 @@ fun BookCategoryGrid(bookCategories: List<BookCategory>) {
         }
     }
 }
+
