@@ -69,6 +69,16 @@ fun SearchScreen(
             }
 
             searchState.error != null -> {
+                Button(
+                    onClick = {
+                        navController.navigate("home")
+                    }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Go Back"
+                    )
+                    Text("Go Back")
+                }
                 Text(text = searchState.error ?: "Unknown Error")
             }
 
@@ -110,7 +120,7 @@ fun SearchScreen(
 
 @Composable
 fun BookItem(book: Book, navController: NavController) {
-    val imageUrl = book.volumeInfo.imageLinks.thumbnail
+    val imageUrl = book.volumeInfo.imageLinks?.thumbnail ?: ""
 
     // Create a custom ImageLoader for debugging
     val imageLoader = ImageLoader.Builder(LocalContext.current)
@@ -129,22 +139,34 @@ fun BookItem(book: Book, navController: NavController) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(text = book.volumeInfo.title, maxLines = 1, overflow = TextOverflow.Ellipsis)
-        Image(
-            painter = rememberAsyncImagePainter(
-                ImageRequest.Builder(LocalContext.current)
-                    .data(imageUrl)
-                    .size(Size.ORIGINAL) // Fetch the original size
-                    .crossfade(true)
-                    .transformations(RoundedCornersTransformation(8f))
-                    .build(),
-                imageLoader = imageLoader
-            ),
-            contentDescription = book.volumeInfo.title,
-            modifier = Modifier
-                .size(200.dp)
-                .fillMaxWidth(),
-            contentScale = ContentScale.Crop
-        )
+        if (imageUrl.isNotEmpty()) {
+            Image(
+                painter = rememberAsyncImagePainter(
+                    ImageRequest.Builder(LocalContext.current)
+                        .data(imageUrl)
+                        .size(Size.ORIGINAL) // Fetch the original size
+                        .crossfade(true)
+                        .transformations(RoundedCornersTransformation(8f))
+                        .build(),
+                    imageLoader = imageLoader
+                ),
+                contentDescription = book.volumeInfo.title,
+                modifier = Modifier
+                    .size(200.dp)
+                    .fillMaxWidth(),
+                contentScale = ContentScale.Crop
+            )
+        } else {
+            Image(
+                painter = rememberAsyncImagePainter(android.R.drawable.ic_menu_report_image),
+                contentDescription = "Fallback Image",
+                modifier = Modifier
+                    .size(200.dp)
+                    .fillMaxWidth(),
+                contentScale = ContentScale.Crop
+            )
+        }
+
 
     }
 }

@@ -65,6 +65,7 @@ android {
 dependencies {
     // Compose ViewModel
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.6")
+    implementation("androidx.compose.runtime:runtime-livedata:1.7.3")
 
     // Network Calls
     implementation("com.squareup.retrofit2:retrofit:2.9.0")

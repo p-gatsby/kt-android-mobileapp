@@ -14,7 +14,7 @@ data class User(
     val username: String,
     val password: String,
     val salt: String,
-    val favoriteGenres: List<String> = emptyList(),
-    val readBooks: List<Book> = emptyList(),
-    val wantToReadBooks: List<Book> = emptyList(),
+    val favoriteGenres: MutableList<String> = mutableListOf(),
+    val readBooks: MutableList<String> = mutableListOf(),
+    val wantToReadList: MutableList<String> = mutableListOf(),
 ) : Parcelable

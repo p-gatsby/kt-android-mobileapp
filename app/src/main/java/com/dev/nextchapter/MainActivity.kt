@@ -17,6 +17,7 @@ import com.dev.nextchapter.ui.screen.HomeScreen
 import com.dev.nextchapter.ui.screen.LoginScreen
 import com.dev.nextchapter.ui.screen.SearchScreen
 import com.dev.nextchapter.ui.screen.SignupScreen
+import com.dev.nextchapter.ui.screen.UserProfileScreen
 import com.dev.nextchapter.ui.theme.NextChapterTheme
 import com.dev.nextchapter.viewmodel.UserViewModel
 
@@ -41,6 +42,9 @@ class MainActivity : ComponentActivity() {
                     }
                     composable("home") {
                         HomeScreen(navController, userViewModel)
+                    }
+                    composable("profile"){
+                        UserProfileScreen(userViewModel, navController)
                     }
                     composable("searchbooks/{query}") { backStackEntry ->
                         val query = backStackEntry.arguments?.getString("query")
