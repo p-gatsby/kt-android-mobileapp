@@ -116,7 +116,7 @@ fun UserProfileScreen(userViewModel: UserViewModel = viewModel(), navController:
 
         }
 
-        Text("Welcome, ${userViewModel.currentUser.value?.username}")
+        Text("Welcome ${userViewModel.currentUser.value?.username}")
 
         Text(
             modifier = Modifier.clickable { showDialog = true },
