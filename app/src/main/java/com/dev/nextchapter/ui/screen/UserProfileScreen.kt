@@ -1,8 +1,10 @@
 package com.dev.nextchapter.ui.screen
 
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -38,6 +40,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
@@ -50,9 +54,10 @@ import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
 import coil.transform.RoundedCornersTransformation
+import com.dev.nextchapter.R
 import com.dev.nextchapter.data.Book
-import com.dev.nextchapter.viewmodel.UserViewModel
 import com.dev.nextchapter.data.googleService
+import com.dev.nextchapter.viewmodel.UserViewModel
 
 @Composable
 fun UserProfileScreen(
@@ -78,9 +83,24 @@ fun UserProfileScreen(
         loadingBooks = false
     }
 
+    val imageModifier = Modifier
+        .border(BorderStroke(5.dp, Color.hsl(0.7f, 0.77f, 0.38f)))
+        .background(Color.hsl(0.19f, 0.57f, 0.33f))
+
+    Image(
+        painter = painterResource(id = R.drawable.dragonshowinguseraccount),
+        contentDescription = stringResource(id = R.string.app_name),
+        contentScale = ContentScale.Crop,
+        modifier = imageModifier.fillMaxSize()
+    )
+
+
+
+
+
     Column(
         modifier = Modifier
-            .background(Color(0xFFE1DCC5))
+            .background(color = Color.Transparent)
             .padding(top = 36.dp, start = 16.dp, end = 16.dp)
             .fillMaxSize(),
     ) {
@@ -179,10 +199,13 @@ fun UserProfileScreen(
             }, text = {
                 Column {
                     OutlinedTextField(
+                        modifier = Modifier
+                            .background(color = Color.Red),
                         value = password,
                         placeholder = { Text("Enter Password") },
                         onValueChange = { password = it },
                         visualTransformation = PasswordVisualTransformation()
+
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     OutlinedTextField(
@@ -224,7 +247,7 @@ fun BookList(books: List<Book>) {
     Column(modifier = Modifier.clickable {
         showCurrentPlaylist = true
     }, horizontalAlignment = Alignment.CenterHorizontally) {
-        if(showCurrentPlaylist){
+        if (showCurrentPlaylist) {
             AlertDialog(onDismissRequest = { showCurrentPlaylist = false }, confirmButton = {
 
             }, title = {

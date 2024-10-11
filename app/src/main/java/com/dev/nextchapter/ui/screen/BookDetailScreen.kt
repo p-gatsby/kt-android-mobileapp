@@ -1,7 +1,9 @@
 package com.dev.nextchapter.ui.screen
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,9 +25,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.paint
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -38,6 +44,7 @@ import coil.request.ImageRequest
 import coil.size.Size
 import coil.transform.RoundedCornersTransformation
 import coil.util.DebugLogger
+import com.dev.nextchapter.R
 import com.dev.nextchapter.viewmodel.BookViewModel
 import com.dev.nextchapter.viewmodel.UserViewModel
 
@@ -55,11 +62,21 @@ fun BookDetailScreen(
 
     val bookState by bookViewModel.bookState
     val currentUser by userViewModel.currentUser.observeAsState()
+//
+    val imageModifier = Modifier
+        .border(BorderStroke(5.dp , Color.hsl(0.7f, 0.77f, 0.38f)))
+        .background(Color.hsl(0.19f, 0.57f, 0.33f))
+
+    Image(
+        painter = painterResource(id = R.drawable.bookonpedestal),
+        contentDescription = stringResource(id = R.string.app_name),
+        contentScale = ContentScale.Crop,
+        modifier = imageModifier.fillMaxSize())
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFE1DCC5))
+            .background(color = Color.Transparent)
             .padding(top = 42.dp, start = 16.dp, end = 16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -117,7 +134,7 @@ fun BookDetailScreen(
                         ),
                         contentDescription = book.volumeInfo.title,
                         modifier = Modifier
-                            .size(300.dp)
+                            .size(250.dp)
                             .fillMaxWidth(),
                         contentScale = ContentScale.Crop
                     )
@@ -126,7 +143,7 @@ fun BookDetailScreen(
                         painter = rememberAsyncImagePainter(android.R.drawable.ic_menu_report_image),
                         contentDescription = "Fallback Image",
                         modifier = Modifier
-                            .size(200.dp)
+                            .size(150.dp)
                             .fillMaxWidth(),
                         contentScale = ContentScale.Crop
                     )
@@ -162,11 +179,13 @@ fun BookDetailScreen(
 
                 }
                 Text(
-                    text = stripHTMLTags(book.volumeInfo.description),
+                    text = stripHTMLTags(book.volumeInfo.description), color = Color.White,
                     modifier = Modifier
+
                         .verticalScroll(
                             rememberScrollState()
                         )
+                        .paint(painter = painterResource(id = R.drawable.bookdetailsonmagicbook), contentScale = ContentScale.FillHeight)
                         .padding(16.dp),
                     textAlign = TextAlign.Justify
                 )

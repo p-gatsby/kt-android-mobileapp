@@ -1,5 +1,6 @@
 package com.dev.nextchapter.ui.screen
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -29,7 +30,9 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -42,12 +45,16 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import com.dev.nextchapter.R
 import com.dev.nextchapter.data.BookCategory
 import com.dev.nextchapter.data.bookCategories
 import com.dev.nextchapter.viewmodel.UserViewModel
@@ -57,15 +64,28 @@ fun HomeScreen(navController: NavController, userViewModel: UserViewModel = view
     val currentUser = userViewModel.currentUser
     var showMenu by remember { mutableStateOf(false) }
     var searchQuery by remember { mutableStateOf("") }
-    var keyboardController = LocalSoftwareKeyboardController.current
-    val linear = Brush.linearGradient(listOf(Color
-        .hsl(300f, 0.26f, 0.71f), Color
-        .hsl(291f, 0.97f, 0.13f)))
+    val keyboardController = LocalSoftwareKeyboardController.current
+//    val linear = Brush.linearGradient(listOf(
+//        Color.hsl(300f, 0.26f, 0.71f),
+//        Color.hsl(299f, 0.9f, 0.1f,),
+//        Color.hsl(300f, 0.26f, 0.71f),
+//        Color.hsl(299f, 0.9f, 0.1f,)
+//    ))
+    val imageModifier = Modifier
+        .border(BorderStroke(5.dp , Color.hsl(0.7f, 0.77f, 0.38f)))
+        .background(Color.hsl(0.19f, 0.57f, 0.33f))
+
+    Image(
+        painter = painterResource(id = R.drawable.libraryhallway),
+        contentDescription = stringResource(id = R.string.app_name),
+        contentScale = ContentScale.Crop,
+        modifier = imageModifier.fillMaxSize())
+
 
 
     Column(
         modifier = Modifier
-            .background(linear)
+            //.background(linear)
             .padding(top = 36.dp, start = 16.dp, end = 16.dp)
             .fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -156,7 +176,7 @@ fun HomeScreen(navController: NavController, userViewModel: UserViewModel = view
 @Composable
 fun BookCategoryGrid(bookCategories: List<BookCategory>) {
     LazyVerticalGrid(
-        columns = GridCells.Fixed(2), // Display two categories per row
+        columns = GridCells.Fixed(1), // Display one book in line
         contentPadding = PaddingValues(16.dp)
     ) {
         items(bookCategories) { category ->
@@ -170,7 +190,7 @@ fun BookCategoryGrid(bookCategories: List<BookCategory>) {
                     painter = rememberAsyncImagePainter(category.coverUrl),
                     contentDescription = category.name,
                     modifier = Modifier
-                        .size(200.dp) // Same height and width
+                        .size(150.dp) // Same height and width
                         .clip(RoundedCornerShape(8.dp))
                         .border(2.dp, Color.Gray, RoundedCornerShape(8.dp)),
                     contentScale = ContentScale.Crop
