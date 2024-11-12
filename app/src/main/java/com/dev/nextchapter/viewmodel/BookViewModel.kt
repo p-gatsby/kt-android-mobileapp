@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dev.nextchapter.data.Book
+import com.dev.nextchapter.data.BookList
 import com.dev.nextchapter.data.googleService
 import kotlinx.coroutines.launch
 
@@ -13,8 +14,8 @@ class BookViewModel : ViewModel() {
     private val _searchListState = mutableStateOf(SearchState())
     val searchListState: State<SearchState> = _searchListState
 
-    private val _bookState = mutableStateOf(BookState())
-    val bookState: State<BookState> = _bookState
+    private val _bookDetailState = mutableStateOf(BookDetailState())
+    val bookDetailState: State<BookDetailState> = _bookDetailState
 
     fun searchBooks(query: String) {
         viewModelScope.launch {
@@ -38,12 +39,12 @@ class BookViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 val response = googleService.getBookDetails(volumeId = volumeId)
-                _bookState.value = _bookState.value.copy(
+                _bookDetailState.value = _bookDetailState.value.copy(
                     loading = false,
                     book = response,
                 )
             } catch (e: Exception) {
-                _bookState.value = _bookState.value.copy(
+                _bookDetailState.value = _bookDetailState.value.copy(
                     loading = false,
                     error = "Error fetching volumeId($volumeId):  ${e.message}"
                 )
@@ -57,7 +58,7 @@ class BookViewModel : ViewModel() {
         val error: String? = null
     )
 
-    data class BookState(
+    data class BookDetailState(
         val loading: Boolean = true,
         val book: Book? = null,
         val error: String? = null,

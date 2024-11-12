@@ -60,7 +60,7 @@ fun BookDetailScreen(
         bookViewModel.getBook(volumeId)
     }
 
-    val bookState by bookViewModel.bookState
+    val bookState by bookViewModel.bookDetailState
     val currentUser by userViewModel.currentUser.observeAsState()
 //
     val imageModifier = Modifier
@@ -157,7 +157,7 @@ fun BookDetailScreen(
                     color = Color.DarkGray
                 )
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-                    if (currentUser?.readBooks?.contains(volumeId) == true) {
+                    if (currentUser?.haveRead?.bookList?.contains(volumeId) == true) {
                         Button(onClick = {
                             userViewModel.removeBookToRead(volumeId)
                         }) { Text("Remove from Have Read") }
@@ -167,7 +167,7 @@ fun BookDetailScreen(
                         }) { Text("Add to Have Read") }
                     }
 
-                    if (currentUser?.wantToReadList?.contains(volumeId) == true) {
+                    if (currentUser?.wantToRead?.bookList?.contains(volumeId) == true) {
                         Button(onClick = {
                             userViewModel.removeBookToWantToReadList(volumeId)
                         }) { Text("Remove from Have Read") }

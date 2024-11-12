@@ -1,6 +1,9 @@
 package com.dev.nextchapter.data
 
 import android.os.Parcelable
+import androidx.room.PrimaryKey
+import androidx.room.TypeConverter
+import androidx.room.TypeConverters
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
@@ -8,6 +11,19 @@ import kotlinx.parcelize.Parcelize
 data class BookListResponse(
     @SerializedName("items")
     val bookList: List<Book>
+) : Parcelable
+
+@Parcelize
+data class BookList(
+    @PrimaryKey
+    val id: Int = 0,
+    val authorId: Int,
+    var allowCollaborators: Boolean,
+    var title: String,
+    @TypeConverters(Converters::class)
+    var bookList: MutableList<String> = mutableListOf(),
+    @TypeConverters(Converters::class)
+    var collaborators: MutableList<Int> = mutableListOf(),
 ) : Parcelable
 
 @Parcelize

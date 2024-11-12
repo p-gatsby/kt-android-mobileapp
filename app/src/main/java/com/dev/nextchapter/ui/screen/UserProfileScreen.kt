@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -50,14 +51,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.dev.nextchapter.R
-import com.dev.nextchapter.data.Book
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
 import coil.transform.RoundedCornersTransformation
-import com.dev.nextchapter.viewmodel.UserViewModel
+import com.dev.nextchapter.R
+import com.dev.nextchapter.data.Book
+import com.dev.nextchapter.data.BookList
 import com.dev.nextchapter.data.googleService
+import com.dev.nextchapter.viewmodel.UserViewModel
 
 @Composable
 fun UserProfileScreen(
@@ -71,32 +73,31 @@ fun UserProfileScreen(
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
     var loadingBooks by remember { mutableStateOf(true) }
-    val readList = remember { mutableStateListOf<Book>() }
-//    val linear = Brush.linearGradient(listOf(
-//        Color.hsl(300f, 0.26f, 0.71f),
-//        Color.hsl(299f, 0.9f, 0.1f,),
-//        Color.hsl(300f, 0.26f, 0.71f),
-//        Color.hsl(299f, 0.9f, 0.1f, )
-//    ), tileMode = TileMode.Repeated)
+    val haveReadBooks by userViewModel.haveReadBooks.observeAsState(emptyList())
+    val wantToReadBooks by userViewModel.wantToReadBooks.observeAsState(emptyList())
+
+    val context = LocalContext.current
+
+    LaunchedEffect(key1 = currentUser?.haveRead, key2 = currentUser?.wantToRead) {
+        currentUser?.let {
+            // fetch haveReadBooks
+            userViewModel.fetchUserBookList(it.haveRead.bookList, userViewModel._haveReadBooks)
+            // fetch wantToReadBooks
+            userViewModel.fetchUserBookList(it.wantToRead.bookList, userViewModel._wantToReadBooks)
+        }
+        loadingBooks = false
+    }
+
     val imageModifier = Modifier
-        .border(BorderStroke(5.dp , Color.hsl(0.7f, 0.77f, 0.38f)))
+        .border(BorderStroke(5.dp, Color.hsl(0.7f, 0.77f, 0.38f)))
         .background(Color.hsl(0.19f, 0.57f, 0.33f))
 
     Image(
         painter = painterResource(id = R.drawable.dragonshowinguseraccount),
         contentDescription = stringResource(id = R.string.app_name),
         contentScale = ContentScale.Crop,
-        modifier = imageModifier.fillMaxSize())
-
-    val context = LocalContext.current
-
-    LaunchedEffect(key1 = currentUser?.readBooks, key2 = currentUser?.wantToReadList) {
-        currentUser?.readBooks?.forEach { id ->
-            val book = googleService.getBookDetails(id)
-            readList.add(book)
-        }
-        loadingBooks = false
-    }
+        modifier = imageModifier.fillMaxSize()
+    )
 
     Column(
         modifier = Modifier
@@ -159,11 +160,12 @@ fun UserProfileScreen(
 
         }
 
-        Text("Welcome, ${userViewModel.currentUser.value?.username}")
+        Text(text = "Welcome, ${userViewModel.currentUser.value?.username}", color = Color.White)
 
         Text(
             modifier = Modifier.clickable { showDialog = true },
             text = "Change your password?",
+            color = Color.White,
             textDecoration = TextDecoration.Underline
         )
 
@@ -233,52 +235,65 @@ fun UserProfileScreen(
                 CircularProgressIndicator()
             }
 
-            !loadingBooks ->
-                BookList(readList)
+            !loadingBooks -> {
+                if (haveReadBooks.isNotEmpty()) {
+                    currentUser?.haveRead?.let { BookList(it.title, haveReadBooks) }
+                } else {
+                    Text("No Booklist :(")
+                }
+            }
+
+
         }
 
     }
 }
 
 @Composable
-fun BookList(books: List<Book>) {
+fun BookList(title: String, bookList: List<Book>) {
     var showCurrentPlaylist by remember { mutableStateOf(false) }
 
     Column(modifier = Modifier.clickable {
         showCurrentPlaylist = true
     }, horizontalAlignment = Alignment.CenterHorizontally) {
-        if(showCurrentPlaylist){
-            AlertDialog(onDismissRequest = { showCurrentPlaylist = false }, confirmButton = {
+        if (showCurrentPlaylist) {
+            AlertDialog(
+                containerColor = Color.White,
+                onDismissRequest = { showCurrentPlaylist = false },
+                confirmButton = {
 
-            }, title = {
-                Text("BookList Title")
-            }, text = {
-                LazyColumn {
-                    items(books) {
-                        Text(it.volumeInfo.title)
+                },
+                title = {
+                    Text(text = title)
+                },
+                text = {
+
+                    LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                        items(bookList) {
+                            Text(it.volumeInfo.title)
+                        }
                     }
-                }
-            })
+
+                })
         }
 
         Image(
             painter = rememberAsyncImagePainter(
                 ImageRequest.Builder(LocalContext.current)
-                    .data(books[0].volumeInfo.imageLinks?.thumbnail)
+                    .data(bookList[0].volumeInfo.imageLinks?.thumbnail)
                     .size(Size.ORIGINAL) // Fetch the original size
                     .crossfade(true)
                     .transformations(RoundedCornersTransformation(8f))
                     .build(),
             ),
-            contentDescription = books[0].volumeInfo.title,
+            contentDescription = bookList[0].volumeInfo.title,
             modifier = Modifier
                 .size(150.dp)
                 .fillMaxWidth(),
             contentScale = ContentScale.Crop
         )
 
-        Text("Liked Books ${books.size}")
+        Text("Liked Books ${bookList.size}")
     }
-
 
 }
